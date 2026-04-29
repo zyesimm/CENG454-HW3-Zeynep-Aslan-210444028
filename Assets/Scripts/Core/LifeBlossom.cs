@@ -22,9 +22,10 @@ public class LifeBlossom : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount)
     {
+
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
-
+        Debug.Log($"LifeBlossom took {amount} damage. Health: {currentHealth}/{maxHealth}");
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (currentHealth <= 0f)
