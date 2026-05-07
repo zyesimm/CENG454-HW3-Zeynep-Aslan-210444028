@@ -26,9 +26,21 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         if (target == null) return;
 
-        Vector2 direction = (target.position - transform.position).normalized;
+        Vector2 direction;
+
+        IMovementStrategy movementStrategy = GetComponent<IMovementStrategy>();
+
+        if (movementStrategy != null)
+        {
+            direction = movementStrategy.GetMovementDirection(transform.position, target.position);
+        }
+        else
+        {
+            direction = (target.position - transform.position).normalized;
+        }   
+
         rb.linearVelocity = direction * moveSpeed;
-    }
+        }
 
     public void TakeDamage(float amount)
     {

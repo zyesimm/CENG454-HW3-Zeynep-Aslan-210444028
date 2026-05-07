@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [SerializeField] private Enemy enemyPrefab;
+    [SerializeField] private Enemy[] enemyPrefabs;
     [SerializeField] private Transform lifeBlossom;
     [SerializeField] private Transform[] spawnPoints;
 
@@ -40,15 +40,16 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        if (enemyPrefab == null || lifeBlossom == null || spawnPoints.Length == 0)
+        if (enemyPrefabs == null || enemyPrefabs.Length == 0 || lifeBlossom == null || spawnPoints.Length == 0)
         {
             Debug.LogWarning("EnemySpawner is missing required references.");
             return;
         }
 
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        Enemy selectedEnemy = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
 
-        Enemy enemy = Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+        Enemy enemy = Instantiate(selectedEnemy, spawnPoint.position, Quaternion.identity);
         enemy.SetTarget(lifeBlossom);
     }
 }
