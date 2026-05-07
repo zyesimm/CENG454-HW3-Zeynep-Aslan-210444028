@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 1064575169307206473}
   - component: {fileID: 3087405799971676478}
   - component: {fileID: 2249778599719547570}
-  - component: {fileID: 5730720495411854929}
+  - component: {fileID: 6524281339758600068}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: Enemy_Zigzag
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -169,7 +169,7 @@ MonoBehaviour:
   maxHealth: 20
   moveSpeed: 2
   damageToCore: 10
---- !u!114 &5730720495411854929
+--- !u!114 &6524281339758600068
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -178,6 +178,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 6728110948907085375}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7027661b43d2048a38435eda1772247d, type: 3}
+  m_Script: {fileID: 11500000, guid: cc07fbae0e4564ce1a4e81d20a81d872, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  zigzagFrequency: 4
+  zigzagStrength: 0.6
