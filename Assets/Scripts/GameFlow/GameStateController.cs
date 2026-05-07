@@ -1,12 +1,25 @@
+using TMPro;
 using UnityEngine;
 
 public class GameStateController : MonoBehaviour
 {
     [SerializeField] private LifeBlossom lifeBlossom;
     [SerializeField] private float surviveDuration = 180f;
+    [SerializeField] private GameObject endPanel;
+    [SerializeField] private TMP_Text endText;
 
     private float timer;
     private bool gameEnded;
+
+    private void Awake()
+    {
+        Time.timeScale = 1f;
+
+        if (endPanel != null)
+        {
+            endPanel.SetActive(false);
+        }
+    }
 
     private void OnEnable()
     {
@@ -32,15 +45,34 @@ public class GameStateController : MonoBehaviour
 
     private void HandleWin()
     {
+        if (gameEnded) return;
+
         gameEnded = true;
-        Debug.Log("Garden Restored! You Win!");
+        ShowEndPanel("Garden Restored!");
         Time.timeScale = 0f;
     }
 
     private void HandleLose()
     {
+        if (gameEnded) return;
+
         gameEnded = true;
-        Debug.Log("The Garden Withered! You Lose!");
+        ShowEndPanel("The Garden Withered!");
         Time.timeScale = 0f;
+    }
+
+    private void ShowEndPanel(string message)
+    {
+        Debug.Log(message);
+
+        if (endPanel != null)
+        {
+            endPanel.SetActive(true);
+        }
+
+        if (endText != null)
+        {
+            endText.text = message;
+        }
     }
 }
