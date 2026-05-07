@@ -7,6 +7,14 @@ public class SpellCaster : MonoBehaviour
     [SerializeField] private float fireCooldown = 0.3f;
 
     private float cooldownTimer;
+    private ISpell currentSpell;
+
+    private void Awake()
+    {
+        currentSpell = new PoisonSpellDecorator(
+            new ThornSpell(projectilePool)
+        );
+    }
 
     private void Update()
     {
@@ -14,23 +22,18 @@ public class SpellCaster : MonoBehaviour
 
         if (Input.GetMouseButton(0) && cooldownTimer <= 0f)
         {
-            CastThornShot();
+            CastCurrentSpell();
             cooldownTimer = fireCooldown;
         }
     }
 
-    private void CastThornShot()
+    private void CastCurrentSpell()
     {
         Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPosition.z = 0f;
 
         Vector2 direction = (mouseWorldPosition - firePoint.position).normalized;
 
-        GameObject projectileObject = projectilePool.GetObject(firePoint.position, Quaternion.identity);
-
-        if (projectileObject.TryGetComponent(out ThornProjectile projectile))
-        {
-            projectile.Initialize(projectilePool, direction);
-        }
+        currentSpell.Cast(firePoint.position, direction);
     }
 }
