@@ -37,10 +37,10 @@ public class Enemy : MonoBehaviour, IDamageable
         else
         {
             direction = (target.position - transform.position).normalized;
-        }   
+        }
 
         rb.linearVelocity = direction * moveSpeed;
-        }
+    }
 
     public void TakeDamage(float amount)
     {
@@ -48,8 +48,14 @@ public class Enemy : MonoBehaviour, IDamageable
 
         if (currentHealth <= 0f)
         {
-            Destroy(gameObject);
+            Die();
         }
+    }
+
+    private void Die()
+    {
+        EnemyEvents.RaiseEnemyDied();
+        Destroy(gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -59,7 +65,7 @@ public class Enemy : MonoBehaviour, IDamageable
         if (damageable != null && collision.gameObject.GetComponent<LifeBlossom>() != null)
         {
             damageable.TakeDamage(damageToCore);
-            Destroy(gameObject);
+            Die();
         }
     }
 }
