@@ -40,6 +40,9 @@ public class Enemy : MonoBehaviour, IDamageable
         }
 
         rb.linearVelocity = direction * moveSpeed;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
+
     }
 
     public void TakeDamage(float amount)
@@ -60,12 +63,12 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
+        LifeBlossom lifeBlossom = collision.gameObject.GetComponent<LifeBlossom>();
 
-        if (damageable != null && collision.gameObject.GetComponent<LifeBlossom>() != null)
+        if (lifeBlossom != null)
         {
-            damageable.TakeDamage(damageToCore);
-            Die();
+            lifeBlossom.TakeDamage(damageToCore);
+            Destroy(gameObject);
         }
-    }
+    }   
 }
