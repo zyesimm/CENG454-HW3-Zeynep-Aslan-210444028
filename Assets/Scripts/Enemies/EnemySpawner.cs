@@ -7,9 +7,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Transform[] spawnPoints;
 
     [Header("Spawn Timing")]
-    [SerializeField] private float initialSpawnInterval = 2f;
-    [SerializeField] private float minimumSpawnInterval = 0.6f;
-    [SerializeField] private float pressureIncreaseRate = 0.05f;
+    [SerializeField] private float initialSpawnInterval = 2.5f;
+    [SerializeField] private float minimumSpawnInterval = 1.2f;
+    [SerializeField] private float pressureIncreaseRate = 0.02f;
 
     private float timer;
     private float currentSpawnInterval;
@@ -48,6 +48,9 @@ public class EnemySpawner : MonoBehaviour
 
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
         Enemy selectedEnemy = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+
+        Vector3 spawnPosition = spawnPoint.position;
+        spawnPosition.z = 0f;
 
         Enemy enemy = Instantiate(selectedEnemy, spawnPoint.position, Quaternion.identity);
         enemy.SetTarget(lifeBlossom);

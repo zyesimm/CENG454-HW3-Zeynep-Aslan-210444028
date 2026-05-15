@@ -6,6 +6,8 @@ public class HUDController : MonoBehaviour
 {
     [SerializeField] private LifeBlossom lifeBlossom;
     [SerializeField] private Slider healthSlider;
+    [SerializeField] private TMP_Text healthText;
+    [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text timerText;
 
     private float elapsedTime;
@@ -36,9 +38,16 @@ public class HUDController : MonoBehaviour
         timerText.text = $"{minutes:00}:{seconds:00}";
     }
 
-    private void UpdateHealth(float currentHealth, float maxHealth)
+    public void UpdateHealth(float currentHealth, float maxHealth)
     {
-        healthSlider.maxValue = maxHealth;
-        healthSlider.value = currentHealth;
+        if (healthSlider != null)
+        {
+            healthSlider.value = currentHealth / maxHealth;
+        }
+
+        if (healthText != null)
+        {
+            healthText.text = $"{currentHealth:0} / {maxHealth:0}";
+        }
     }
 }
