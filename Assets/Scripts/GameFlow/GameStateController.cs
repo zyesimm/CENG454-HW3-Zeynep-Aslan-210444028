@@ -6,6 +6,8 @@ public class GameStateController : MonoBehaviour
 {
     [SerializeField] private LifeBlossom lifeBlossom;
     [SerializeField] private float surviveDuration = 180f;
+    [SerializeField] private PlayerController playerController;
+    [SerializeField] private GameObject startPanel;
 
     [Header("End Screen UI")]
     [SerializeField] private GameObject endPanel;
@@ -17,13 +19,47 @@ public class GameStateController : MonoBehaviour
 
     private void Awake()
     {
-        Time.timeScale = 1f;
+        Time.timeScale = 0f;
 
         if (endPanel != null)
         {
             endPanel.SetActive(false);
         }
+        if (startPanel != null)
+        {
+            startPanel.SetActive(true);
+        }
     }
+
+    public void StartGame()
+    {
+        if (startPanel != null)
+        {
+            startPanel.SetActive(false);
+        }
+
+        Time.timeScale = 1f;
+    }
+
+
+
+
+
+
+    private void HandlePlayerKilled()
+    {
+        if (gameEnded) return;
+        gameEnded= true;
+        ShowEndPanel(
+            "You Were Caught!",
+            "An enemy reached the witch. Avoid direct contact while protecting the LifeBlossom."
+        );
+        Time.timeScale = 0f;
+    }
+
+
+
+
 
     private void OnEnable()
     {
@@ -31,6 +67,11 @@ public class GameStateController : MonoBehaviour
         {
             lifeBlossom.OnCoreDestroyed += HandleLose;
         }
+        if (playerController != null)
+        {
+            playerController.OnPlayerKilled += HandlePlayerKilled;
+        }
+        
     }
 
     private void OnDisable()
@@ -39,6 +80,11 @@ public class GameStateController : MonoBehaviour
         {
             lifeBlossom.OnCoreDestroyed -= HandleLose;
         }
+        if (playerController != null)
+        {
+            playerController.OnPlayerKilled -= HandlePlayerKilled;
+        }
+        
     }
 
     private void Update()

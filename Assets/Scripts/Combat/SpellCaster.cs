@@ -4,7 +4,9 @@ public class SpellCaster : MonoBehaviour
 {
     [SerializeField] private ObjectPool projectilePool;
     [SerializeField] private Transform firePoint;
+    [SerializeField] private PlayerController playerController;
     [SerializeField] private float fireCooldown = 0.3f;
+    [SerializeField] private float targetRange = 8f;
 
     private float cooldownTimer;
     private ISpell currentSpell;
@@ -20,7 +22,7 @@ public class SpellCaster : MonoBehaviour
     {
         cooldownTimer -= Time.deltaTime;
 
-        if (Input.GetMouseButton(0) && cooldownTimer <= 0f)
+        if (Input.GetKey(KeyCode.Space) && cooldownTimer <= 0f)
         {
             CastCurrentSpell();
             cooldownTimer = fireCooldown;
@@ -29,11 +31,40 @@ public class SpellCaster : MonoBehaviour
 
     private void CastCurrentSpell()
     {
-        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mouseWorldPosition.z = 0f;
-
-        Vector2 direction = (mouseWorldPosition - firePoint.position).normalized;
-
+        Vector2 direction = GetAimDirection();
         currentSpell.Cast(firePoint.position, direction);
+    }
+
+    private Vector2 GetAimDirection()
+    {
+        Enemy closestEnemy = FindClosestEnemy();
+
+        if (closestEnemy != null)
+        {
+            return ((Vector2)closestEnemy.transform.position - (Vector2)firePoint.position).normalized;
+        }
+
+        return playerController.FacingDirection.normalized;
+    }
+
+    private Enemy FindClosestEnemy()
+    {
+        Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+
+        Enemy closestEnemy = null;
+        float closestDistance = targetRange;
+
+        foreach (Enemy enemy in enemies)
+        {
+            float distance = Vector2.Distance(firePoint.position, enemy.transform.position);
+
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestEnemy = enemy;
+            }
+        }
+
+        return closestEnemy;
     }
 }
