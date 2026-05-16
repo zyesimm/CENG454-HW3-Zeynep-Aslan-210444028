@@ -1,12 +1,16 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameStateController : MonoBehaviour
 {
     [SerializeField] private LifeBlossom lifeBlossom;
     [SerializeField] private float surviveDuration = 180f;
+
+    [Header("End Screen UI")]
     [SerializeField] private GameObject endPanel;
     [SerializeField] private TMP_Text endText;
+    [SerializeField] private TMP_Text endSubText;
 
     private float timer;
     private bool gameEnded;
@@ -23,12 +27,18 @@ public class GameStateController : MonoBehaviour
 
     private void OnEnable()
     {
-        lifeBlossom.OnCoreDestroyed += HandleLose;
+        if (lifeBlossom != null)
+        {
+            lifeBlossom.OnCoreDestroyed += HandleLose;
+        }
     }
 
     private void OnDisable()
     {
-        lifeBlossom.OnCoreDestroyed -= HandleLose;
+        if (lifeBlossom != null)
+        {
+            lifeBlossom.OnCoreDestroyed -= HandleLose;
+        }
     }
 
     private void Update()
@@ -48,7 +58,10 @@ public class GameStateController : MonoBehaviour
         if (gameEnded) return;
 
         gameEnded = true;
-        ShowEndPanel("Garden Restored!");
+        ShowEndPanel(
+            "Garden Restored!",
+            "The LifeBlossom survived the enemy pressure."
+        );
         Time.timeScale = 0f;
     }
 
@@ -57,13 +70,16 @@ public class GameStateController : MonoBehaviour
         if (gameEnded) return;
 
         gameEnded = true;
-        ShowEndPanel("The Garden Withered!");
+        ShowEndPanel(
+            "The Garden Withered!",
+            "The LifeBlossom was destroyed before the timer ended."
+        );
         Time.timeScale = 0f;
     }
 
-    private void ShowEndPanel(string message)
+    private void ShowEndPanel(string titleMessage, string subMessage)
     {
-        Debug.Log(message);
+        Debug.Log(titleMessage);
 
         if (endPanel != null)
         {
@@ -72,7 +88,18 @@ public class GameStateController : MonoBehaviour
 
         if (endText != null)
         {
-            endText.text = message;
+            endText.text = titleMessage;
         }
+
+        if (endSubText != null)
+        {
+            endSubText.text = subMessage;
+        }
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
