@@ -8,7 +8,7 @@ public class ThornProjectile : MonoBehaviour, IPoolable
 
     [Header("Visual")]
     [SerializeField] private Transform visual;
-    [SerializeField] private float visualRotationOffset = 0f;
+   
 
     private ObjectPool ownerPool;
     private float lifeTimer;
@@ -39,14 +39,18 @@ public class ThornProjectile : MonoBehaviour, IPoolable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Enemy"))
+        if (other.GetComponent<Enemy>() != null)
         {
+            if (other.TryGetComponent(out IDamageable damageable))
+            {
+                damageable.TakeDamage(damage);
+            }
+            
+            ReturnToPool();
             return;
         }
-
-        if (other.TryGetComponent(out IDamageable damageable))
+        if (other.GetComponent<LifeBlossom>() != null)
         {
-            damageable.TakeDamage(damage);
             ReturnToPool();
         }
     }
