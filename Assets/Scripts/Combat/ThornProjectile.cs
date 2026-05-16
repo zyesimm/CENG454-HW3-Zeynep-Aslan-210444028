@@ -6,6 +6,10 @@ public class ThornProjectile : MonoBehaviour, IPoolable
     [SerializeField] private float damage = 20f;
     [SerializeField] private float lifeTime = 2f;
 
+    [Header("Visual")]
+    [SerializeField] private Transform visual;
+    [SerializeField] private float visualRotationOffset = 0f;
+
     private ObjectPool ownerPool;
     private float lifeTimer;
     private Vector2 moveDirection;
@@ -14,6 +18,11 @@ public class ThornProjectile : MonoBehaviour, IPoolable
     {
         ownerPool = pool;
         moveDirection = direction.normalized;
+        if (moveDirection != Vector2.zero)
+        {
+            float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
+        }
     }
 
     private void Update()
