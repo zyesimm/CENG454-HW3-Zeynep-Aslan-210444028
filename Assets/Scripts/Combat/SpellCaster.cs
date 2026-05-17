@@ -6,13 +6,23 @@ public class SpellCaster : MonoBehaviour
     [SerializeField] private Transform firePoint;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private float fireCooldown = 0.3f;
-    [SerializeField] private float targetRange = 8f;
+    [SerializeField] private float targetRange = 10f;
 
     private float cooldownTimer;
     private ISpell currentSpell;
 
     private void Awake()
     {
+        if (playerController == null)
+        {
+            playerController = GetComponent<PlayerController>();
+        }
+
+        if (firePoint == null)
+        {
+            firePoint = transform;
+        }
+
         currentSpell = new PoisonSpellDecorator(
             new ThornSpell(projectilePool)
         );
@@ -41,10 +51,21 @@ public class SpellCaster : MonoBehaviour
 
         if (closestEnemy != null)
         {
-            return ((Vector2)closestEnemy.transform.position - (Vector2)firePoint.position).normalized;
+            Vector2 targetDirection =
+                ((Vector2)closestEnemy.transform.position - (Vector2)firePoint.position).normalized;
+
+            if (targetDirection != Vector2.zero)
+            {
+                return targetDirection;
+            }
         }
 
-        return playerController.FacingDirection.normalized;
+        if (playerController != null && playerController.FacingDirection != Vector2.zero)
+        {
+            return playerController.FacingDirection.normalized;
+        }
+
+        return Vector2.right;
     }
 
     private Enemy FindClosestEnemy()
@@ -56,6 +77,8 @@ public class SpellCaster : MonoBehaviour
 
         foreach (Enemy enemy in enemies)
         {
+            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
+
             float distance = Vector2.Distance(firePoint.position, enemy.transform.position);
 
             if (distance < closestDistance)
