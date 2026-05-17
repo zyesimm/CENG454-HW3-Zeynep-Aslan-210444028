@@ -13,6 +13,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float initialSpawnInterval = 2.5f;
     [SerializeField] private float minimumSpawnInterval = 0.75f;
     [SerializeField] private float pressureIncreaseRate = 0.015f;
+    [SerializeField] private float spawnPadding = 2f;
 
     private float timer;
     private float currentSpawnInterval;
@@ -60,29 +61,32 @@ public class EnemySpawner : MonoBehaviour
     {
         int side = Random.Range(0, 4);
 
+        float outerXLimit = spawnXLimit + spawnPadding;
+        float outerYLimit = spawnYLimit + spawnPadding;
+
         float x = 0f;
         float y = 0f;
 
         switch (side)
         {
-            case 0: // Left
-                x = -spawnXLimit;
-                y = Random.Range(-spawnYLimit, spawnYLimit);
+            case 0:
+                x = -outerXLimit;
+                y = Random.Range(-outerYLimit, outerYLimit);
                 break;
 
-            case 1: // Right
-                x = spawnXLimit;
-                y = Random.Range(-spawnYLimit, spawnYLimit);
+            case 1:
+                x = outerXLimit;
+                y = Random.Range(-outerYLimit, outerYLimit);
                 break;
 
-            case 2: // Top
-                x = Random.Range(-spawnXLimit, spawnXLimit);
-                y = spawnYLimit;
+            case 2:
+                x = Random.Range(-outerXLimit, outerXLimit);
+                y = outerYLimit;
                 break;
 
-            case 3: // Bottom
-                x = Random.Range(-spawnXLimit, spawnXLimit);
-                y = -spawnYLimit;
+            case 3:
+                x = Random.Range(-outerXLimit, outerXLimit);
+                y = -outerYLimit;
                 break;
         }
 

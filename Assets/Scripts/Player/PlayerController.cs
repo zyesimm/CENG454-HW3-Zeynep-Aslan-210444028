@@ -50,14 +50,13 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = moveInput * moveSpeed;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (collision.gameObject.GetComponent<Enemy>() != null)
+        if (other.GetComponent<Enemy>() != null)
         {
             OnPlayerKilled?.Invoke();
         }
     }
-
 
 
 }

@@ -5,8 +5,10 @@ using UnityEngine.SceneManagement;
 public class GameStateController : MonoBehaviour
 {
     [SerializeField] private LifeBlossom lifeBlossom;
-    [SerializeField] private float surviveDuration = 180f;
     [SerializeField] private PlayerController playerController;
+    [SerializeField] private float surviveDuration = 180f;
+
+    [Header("Start Screen UI")]
     [SerializeField] private GameObject startPanel;
 
     [Header("End Screen UI")]
@@ -15,81 +17,56 @@ public class GameStateController : MonoBehaviour
     [SerializeField] private TMP_Text endSubText;
 
     private float timer;
+    private bool gameStarted;
     private bool gameEnded;
 
     private void Awake()
     {
         Time.timeScale = 0f;
+        timer = 0f;
+        gameStarted = false;
+        gameEnded = false;
+
+        if (startPanel != null)
+        {
+            startPanel.SetActive(true);
+        }
 
         if (endPanel != null)
         {
             endPanel.SetActive(false);
         }
-        if (startPanel != null)
-        {
-            startPanel.SetActive(true);
-        }
     }
-
-    public void StartGame()
-    {
-        if (startPanel != null)
-        {
-            startPanel.SetActive(false);
-        }
-
-        Time.timeScale = 1f;
-    }
-
-
-
-
-
-
-    private void HandlePlayerKilled()
-    {
-        if (gameEnded) return;
-        gameEnded= true;
-        ShowEndPanel(
-            "You Were Caught!",
-            "An enemy reached the witch. Avoid direct contact while protecting the LifeBlossom."
-        );
-        Time.timeScale = 0f;
-    }
-
-
-
-
 
     private void OnEnable()
     {
         if (lifeBlossom != null)
         {
-            lifeBlossom.OnCoreDestroyed += HandleLose;
+            lifeBlossom.OnCoreDestroyed += HandleCoreDestroyed;
         }
+
         if (playerController != null)
         {
             playerController.OnPlayerKilled += HandlePlayerKilled;
         }
-        
     }
 
     private void OnDisable()
     {
         if (lifeBlossom != null)
         {
-            lifeBlossom.OnCoreDestroyed -= HandleLose;
+            lifeBlossom.OnCoreDestroyed -= HandleCoreDestroyed;
         }
+
         if (playerController != null)
         {
             playerController.OnPlayerKilled -= HandlePlayerKilled;
         }
-        
     }
 
     private void Update()
     {
-        if (gameEnded) return;
+        if (!gameStarted || gameEnded) return;
 
         timer += Time.deltaTime;
 
@@ -99,34 +76,68 @@ public class GameStateController : MonoBehaviour
         }
     }
 
+    public void StartGame()
+    {
+        Time.timeScale = 1f;
+        timer = 0f;
+        gameStarted = true;
+        gameEnded = false;
+
+        if (startPanel != null)
+        {
+            startPanel.SetActive(false);
+        }
+
+        if (endPanel != null)
+        {
+            endPanel.SetActive(false);
+        }
+    }
+
     private void HandleWin()
     {
         if (gameEnded) return;
 
         gameEnded = true;
+
         ShowEndPanel(
             "Garden Restored!",
             "The LifeBlossom survived the enemy pressure."
         );
+
         Time.timeScale = 0f;
     }
 
-    private void HandleLose()
+    private void HandleCoreDestroyed()
     {
         if (gameEnded) return;
 
         gameEnded = true;
+
         ShowEndPanel(
             "The Garden Withered!",
             "The LifeBlossom was destroyed before the timer ended."
         );
+
+        Time.timeScale = 0f;
+    }
+
+    private void HandlePlayerKilled()
+    {
+        if (gameEnded) return;
+
+        gameEnded = true;
+
+        ShowEndPanel(
+            "You Were Caught!",
+            "An enemy reached the witch. Avoid direct contact while protecting the LifeBlossom."
+        );
+
         Time.timeScale = 0f;
     }
 
     private void ShowEndPanel(string titleMessage, string subMessage)
     {
-        Debug.Log(titleMessage);
-
         if (endPanel != null)
         {
             endPanel.SetActive(true);
